@@ -8,7 +8,7 @@ IMAGES=echosrv fcurl # plus the combo image / Dockerfile without ext.
 
 DOCKER_PREFIX := docker.io/fortio/fortio
 BUILD_IMAGE_TAG := v78@sha256:a9ce421715f9c05a6441e187b227c42f76f3235318267838a3ba382570a5da69
-BUILDX_PLATFORMS := linux/amd64,linux/arm64,linux/ppc64le,linux/s390x
+BUILDX_PLATFORMS := linux/amd64,linux/arm64
 BUILDX_POSTFIX :=
 ifeq '$(shell echo $(BUILDX_PLATFORMS) | awk -F "," "{print NF-1}")' '0'
 	BUILDX_POSTFIX = --load
@@ -28,7 +28,6 @@ CERT_TEMP_DIR := ./cert-tmp/
 # as somehow that makes gometaliner silently not find/report errors...
 PACKAGES ?= $(shell go list ./...)
 # from fortio 1.4 we use go 1.14 (from go 1.8 up to fortio 1.3) and switched to go modules (from vendor)
-
 # Local targets:
 go-install:
 	go install $(PACKAGES)

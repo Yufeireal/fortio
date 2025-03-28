@@ -1,17 +1,30 @@
-# Build the binaries in larger image
-FROM docker.io/fortio/fortio.build:v78@sha256:a9ce421715f9c05a6441e187b227c42f76f3235318267838a3ba382570a5da69 AS build
-WORKDIR /build
-COPY --chown=build:build . fortio
-ARG MODE=install
-# We moved a lot of the logic into the Makefile so it can be reused in brew
-# but that also couples the 2, this expects to find binaries in the right place etc
-RUN make -C fortio official-build-version BUILD_DIR=/build MODE=${MODE}
+FROM golang:1.24 AS builder
+
+# Set working dir
+WORKDIR /app
+
+# Copy go.mod and go.sum early
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Install orchestrion
+RUN go install github.com/DataDog/orchestrion@latest
+
+# Add orchestrion to PATH (if installed to GOPATH/bin)
+ENV PATH="/go/bin:${PATH}"
+
+# Copy source code
+COPY . .
+
+# Use orchestrion to build
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 orchestrion go build -o app .
+
 
 # Minimal image with just the binary and certs
 FROM scratch AS release
 # We don't need to copy certs anymore since cli 1.6.0
 # COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=build /build/result/fortio /usr/bin/fortio
+COPY --from=builder /app/app /usr/bin/fortio
 EXPOSE 8078
 EXPOSE 8079
 EXPOSE 8080
