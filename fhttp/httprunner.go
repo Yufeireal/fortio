@@ -24,7 +24,7 @@ import (
 	"strconv"
 	"sync"
 	"time"
-	"github.com/DataDog/dd-trace-go/ddtrace/tracer"
+	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 	"fortio.org/fortio/jrpc"
 	"fortio.org/fortio/periodic"
 	"fortio.org/fortio/stats"
