@@ -24,7 +24,7 @@ import (
 	"strconv"
 	"sync"
 	"time"
-
+	"github.com/DataDog/dd-trace-go/ddtrace/tracer"
 	"fortio.org/fortio/jrpc"
 	"fortio.org/fortio/periodic"
 	"fortio.org/fortio/stats"
@@ -146,7 +146,12 @@ func RunHTTPTest(o *HTTPRunnerOptions) (*HTTPRunnerResults, error) {
 	httpstate := make([]HTTPRunnerResults, numThreads)
 	// First build all the clients sequentially. This ensures we do not have data races when
 	// constructing requests.
-	ctx := context.Background()
+	span, ctx := tracer.StartSpanFromContext(
+		context.Background(), "RunHTTPTest",
+		tracer.ResourceName("http_test"),
+		tracer.Tag("http.url", o.URL),
+	)
+	defer span.Finish()
 	for i := range numThreads {
 		r.Options().Runners[i] = &httpstate[i]
 		// Temp mutate the option so each client gets a logging id
