@@ -25,8 +25,8 @@ import (
 	"math/rand"
 	"net"
 	"net/http"
-	"net/http/httptrace"
 	"net/http/httputil"
+	"net/http/httptrace"
 	"net/url"
 	"strconv"
 	"strings"
@@ -40,6 +40,7 @@ import (
 	"fortio.org/scli"
 	"github.com/google/uuid"
 	"golang.org/x/net/http2"
+	ddhttptrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/net/http"
 )
 
 // Fetcher is the URL content fetcher that the different client implements.
@@ -604,9 +605,9 @@ func NewStdClient(o *HTTPOptions) (*Client, error) {
 		body:                 o.Payload,
 		bodyContainsUUID:     strings.Contains(string(o.Payload), uuidToken),
 		req:                  req,
-		client: &http.Client{
+		client: ddhttptrace.WrapClient(&http.Client{
 			Timeout: o.HTTPReqTimeOut,
-		},
+		}),
 		id:          o.ID,
 		logErrors:   o.LogErrors,
 		ipAddrUsage: stats.NewOccurrence(),
