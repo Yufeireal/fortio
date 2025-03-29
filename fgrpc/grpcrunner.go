@@ -139,6 +139,7 @@ type GRPCRunnerOptions struct {
 // RunGRPCTest runs an HTTP test and returns the aggregated stats.
 //
 //nolint:funlen, gocognit, gocyclo
+//dd:span func_name:RunGRPCTest
 func RunGRPCTest(o *GRPCRunnerOptions) (*GRPCRunnerResults, error) {
 	if o.Streams < 1 {
 		o.Streams = 1

@@ -14,7 +14,9 @@
 
 package main
 
-import "fortio.org/fortio/cli"
+import (
+	"fortio.org/fortio/cli"
+)
 
 // This file content moved to cli/fortio_main.go so it can be reused in variants of fortio
 // like fortiotel (fortio with opentelemetry)

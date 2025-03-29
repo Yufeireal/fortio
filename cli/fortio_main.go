@@ -341,7 +341,7 @@ func fortioNC() {
 	}
 }
 
-//nolint:funlen // maybe refactor/shorten later.
+//dd:span func_name:fortioLoad
 func fortioLoad(justCurl bool, percList []float64, hook bincommon.FortioHook) {
 	if len(flag.Args()) != 1 {
 		cli.ErrUsage("Error: fortio load/curl needs a URL or destination")
